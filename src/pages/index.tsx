@@ -1,6 +1,7 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import TalentOSWaitlist from "@/comps/TalentOSWaitlist";
 
 const MagicRings = dynamic(() => import("@/comps/Global/MagicRings/MagicRings"), {
   ssr: false,
@@ -15,7 +16,7 @@ const STATIC_HTML = `
   <div>
     <div class="offer-strip-text syne">Driip can recover up to 51 hours per hire.</div>
   </div>
-  <a href="#demo" class="offer-strip-btn syne">Find Out How →</a>
+  <a href="#demo" class="offer-strip-btn syne">Find Out How</a>
 </div>
 
 <section class="platform" id="platform">
@@ -403,7 +404,7 @@ const STATIC_HTML = `
             </select>
           </div>
         </div>
-        <button type="submit" class="form-submit syne" style="width:100%;margin-top:20px;padding:14px;border-radius:9px;background:#9F73E6;border:none;color:#0E0E10;font-size:14px;font-family:'Syne',sans-serif;font-weight:800;letter-spacing:.02em;cursor:pointer;">Request Early Access Pass →</button>
+        <button type="submit" class="form-submit syne" style="width:100%;margin-top:20px;padding:14px;border-radius:9px;background:#9F73E6;border:none;color:#0E0E10;font-size:14px;font-family:'Syne',sans-serif;font-weight:800;letter-spacing:.02em;cursor:pointer;">Request Early Access Pass</button>
         <p class="form-note mono">NO CREDIT CARD · NO SALES PITCH · ALL AGENTS LIVE</p>
       </form>
       <div class="form-success" id="form-success" style="display:none;text-align:center;padding:44px 20px;">
@@ -421,6 +422,7 @@ export default function TalentOSPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 1024);
@@ -479,6 +481,11 @@ export default function TalentOSPage() {
         return;
       }
 
+      if (target.closest(".offer-strip-btn")) {
+        e.preventDefault();
+        setShowWaitlist(true);
+        return;
+      }
 
       const anchor = target.closest<HTMLAnchorElement>('a[href^="#"]');
       if (anchor) {
@@ -590,7 +597,7 @@ export default function TalentOSPage() {
           </div>
         )}
         {!isMobile && (
-          <a href="#demo" className="nav-cta syne">Join the Waitlist →</a>
+          <a href="#demo" className="nav-cta syne">Join the Waitlist</a>
         )}
         <button
           className="nav-hamburger"
@@ -679,7 +686,7 @@ export default function TalentOSPage() {
               display: "block",
             }}
           >
-            Join the Waitlist →
+            Join the Waitlist
           </a>
         </div>
       )}
@@ -1079,6 +1086,28 @@ export default function TalentOSPage() {
           .signup-form{padding:24px 16px;}
         }
       `}</style>
+
+      {showWaitlist && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          overflowY: "auto",
+        }}>
+          <button
+            onClick={() => setShowWaitlist(false)}
+            style={{
+              position: "fixed", top: 16, right: 20, zIndex: 1001,
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 6, color: "#fff", fontSize: 18, lineHeight: 1,
+              width: 36, height: 36, cursor: "pointer", display: "flex",
+              alignItems: "center", justifyContent: "center",
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <TalentOSWaitlist />
+        </div>
+      )}
     </>
   );
 }
