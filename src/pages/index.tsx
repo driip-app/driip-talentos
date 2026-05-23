@@ -389,11 +389,11 @@ const STATIC_HTML = `
     <div class="signup-form" id="form-wrap">
       <form id="driip-form">
         <div class="form-row full">
-          <div class="form-group"><label class="form-label mono">EMAIL</label><input class="form-input" type="email" placeholder="drax@youremail.com" required /></div>
+          <div class="form-group"><label class="form-label mono">EMAIL</label><input class="form-input" type="email" name="email" placeholder="drax@youremail.com" required /></div>
         </div>
         <div class="form-row full">
           <div class="form-group"><label class="form-label mono">WHAT'S YOUR BIGGEST HIRING HEADACHE?</label>
-            <select class="form-select" required>
+            <select class="form-select" name="headache" required>
               <option value="" disabled selected>Be honest. We've heard it all.</option>
               <option>I have 200 CVs and no time to read them</option>
               <option>Every interview takes 11 emails to schedule</option>
@@ -419,6 +419,15 @@ const STATIC_HTML = `
 export default function TalentOSPage() {
   const staticRef = useRef<HTMLDivElement>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const root = staticRef.current;
@@ -484,11 +493,26 @@ export default function TalentOSPage() {
     };
 
     const onSubmit = (e: SubmitEvent) => {
-      const form = e.target as HTMLElement;
-      if (form?.id === "driip-form") {
-        e.preventDefault();
-        setFormSubmitted(true);
-      }
+      const form = e.target as HTMLFormElement;
+      if (form?.id !== "driip-form") return;
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+      if (btn) btn.disabled = true;
+      fetch("https://formspree.io/f/xredlbnb", {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      })
+        .then(res => {
+          if (res.ok) {
+            setFormSubmitted(true);
+          } else {
+            if (btn) btn.disabled = false;
+          }
+        })
+        .catch(() => {
+          if (btn) btn.disabled = false;
+        });
     };
 
     root.addEventListener("click", onClick);
@@ -499,6 +523,35 @@ export default function TalentOSPage() {
       root.removeEventListener("click", onClick);
       root.removeEventListener("submit", onSubmit as EventListener);
     };
+  }, []);
+
+  useEffect(() => {
+    const root = staticRef.current;
+    if (!root) return;
+
+    const grid = root.querySelector<HTMLElement>(".platform-grid");
+    const mockups = root.querySelectorAll<HTMLElement>(".feature-panel > div:last-child");
+    const panels = root.querySelectorAll<HTMLElement>(".feature-panel");
+
+    const apply = () => {
+      const mobile = window.innerWidth <= 960;
+      if (grid) {
+        grid.style.display = mobile ? "flex" : "";
+        grid.style.flexDirection = mobile ? "column" : "";
+      }
+      mockups.forEach(el => {
+        el.style.display = mobile ? "none" : "";
+      });
+      panels.forEach(el => {
+        el.style.gridTemplateColumns = mobile ? "1fr" : "";
+        el.style.gap = mobile ? "0" : "";
+        el.style.padding = mobile ? "28px 20px" : "";
+      });
+    };
+
+    apply();
+    window.addEventListener("resize", apply);
+    return () => window.removeEventListener("resize", apply);
   }, []);
 
   useEffect(() => {
@@ -523,19 +576,113 @@ export default function TalentOSPage() {
         />
       </Head>
 
-      <nav>
+      <nav style={isMobile ? { justifyContent: "center", position: "relative" } : undefined}>
         <a href="#top" className="nav-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo-beta-v2.png" alt="Driip" />
         </a>
-        <div className="nav-links">
-          <a href="#platform">Meet the Agents</a>
-          <a href="#features">Agent Superpowers</a>
-          <a href="#personas">Find Your Agent</a>
-          <a href="#demo">Early Access Pass</a>
-        </div>
-        <a href="#demo" className="nav-cta syne">Join the Waitlist →</a>
+        {!isMobile && (
+          <div className="nav-links">
+            <a href="#platform">Meet the Agents</a>
+            <a href="#features">Agent Superpowers</a>
+            <a href="#personas">Find Your Agent</a>
+            <a href="#demo">Early Access Pass</a>
+          </div>
+        )}
+        {!isMobile && (
+          <a href="#demo" className="nav-cta syne">Join the Waitlist →</a>
+        )}
+        <button
+          className="nav-hamburger"
+          aria-label="Toggle menu"
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen(o => !o)}
+          style={{
+            display: isMobile ? "flex" : "none",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: 5,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 6,
+            width: 36,
+            height: 36,
+            position: "absolute",
+            right: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <span style={{
+            display: "block", width: 22, height: 2,
+            background: "rgba(255,255,255,0.85)", borderRadius: 2,
+            transition: "all .25s",
+            transform: navOpen ? "translateY(7px) rotate(45deg)" : "none",
+          }} />
+          <span style={{
+            display: "block", width: 22, height: 2,
+            background: "rgba(255,255,255,0.85)", borderRadius: 2,
+            transition: "all .25s",
+            opacity: navOpen ? 0 : 1,
+          }} />
+          <span style={{
+            display: "block", width: 22, height: 2,
+            background: "rgba(255,255,255,0.85)", borderRadius: 2,
+            transition: "all .25s",
+            transform: navOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+          }} />
+        </button>
       </nav>
+      {navOpen && (
+        <div
+          onClick={() => setNavOpen(false)}
+          style={{
+            position: "fixed",
+            top: 62,
+            left: 0,
+            right: 0,
+            zIndex: 99,
+            background: "rgba(8,8,11,0.98)",
+            backdropFilter: "blur(14px)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            display: "flex",
+            flexDirection: "column",
+            padding: "8px 0 16px",
+          }}
+        >
+          {(["#platform", "#features", "#personas", "#demo"] as const).map((href, i) => (
+            <a
+              key={href}
+              href={href}
+              style={{
+                padding: "14px 20px",
+                fontSize: 15,
+                color: "rgba(255,255,255,0.75)",
+                display: "block",
+              }}
+            >
+              {["Meet the Agents", "Agent Superpowers", "Find Your Agent", "Early Access Pass"][i]}
+            </a>
+          ))}
+          <a
+            href="#demo"
+            style={{
+              margin: "8px 20px 0",
+              padding: "12px 20px",
+              background: "#9F73E6",
+              color: "#0E0E10",
+              borderRadius: 7,
+              fontWeight: 700,
+              fontFamily: "'Syne', sans-serif",
+              textAlign: "center",
+              display: "block",
+            }}
+          >
+            Join the Waitlist →
+          </a>
+        </div>
+      )}
 
       <section className="hero" id="top">
         <div className="hero-rings">
@@ -570,17 +717,6 @@ export default function TalentOSPage() {
           <p className="hero-sub">
             Focus on the real conversations with talents - while we screen your pile, schedule your interviews, and handle every candidate communication in the loop before you burn another Tuesday.
           </p>
-          <div className="hero-agents">
-            <div className="hero-agent-chip a1">
-              <span>CANDIDATE SCREENER</span>
-            </div>
-            <div className="hero-agent-chip a1">
-              <span>INTERVIEW SCHEDULER</span>
-            </div>
-            <div className="hero-agent-chip a1">
-              <span>COMMUNICATIONS BOT</span>
-            </div>
-          </div>
           <div className="hero-stats">
             <div>
               <div className="stat-num syne">51<span>h+</span></div>
@@ -892,7 +1028,7 @@ export default function TalentOSPage() {
         .form-row.full{grid-template-columns:1fr;}
         .form-group{display:flex;flex-direction:column;gap:5px;}
         .form-label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,0.4);letter-spacing:.06em;}
-        .form-input,.form-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:10px 13px;color:#fff;font-size:13px;transition:border-color .18s;outline:none;-webkit-appearance:none;appearance:none;}
+        .form-input,.form-select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:10px 13px;color:#fff;font-size:13px;transition:border-color .18s;outline:none;-webkit-appearance:none;appearance:none;}
         .form-input::placeholder{color:rgba(255,255,255,0.2);}
         .form-input:focus,.form-select:focus{border-color:rgba(159,115,230,0.4);}
         .form-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
@@ -907,6 +1043,13 @@ export default function TalentOSPage() {
 
         @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;width:36px;height:36px;}
+        .ham-line{display:block;width:22px;height:2px;background:rgba(255,255,255,0.85);border-radius:2px;transition:all .25s;}
+        .ham-line.open:nth-child(1){transform:translateY(7px) rotate(45deg);}
+        .ham-line.open:nth-child(2){opacity:0;}
+        .ham-line.open:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+
         @media(max-width:960px){
           .hero-inner,.feature-panel,.platform-grid,.tgrid{grid-template-columns:1fr;}
           .pc{padding:28px 20px;}
@@ -916,6 +1059,24 @@ export default function TalentOSPage() {
           .hero h1{font-size:32px;}
           .platform-title{font-size:28px;}
           .signup-title{font-size:28px;}
+          .platform-grid{display:flex!important;flex-direction:column;gap:16px;}
+          .agent-card{width:100%;box-sizing:border-box;}
+          .form-input,.form-select{font-size:16px;}
+          .feature-panel > div:last-child{display:none;}
+          .feature-panel{grid-template-columns:1fr;}
+        }
+        @media(max-width:1024px){
+          .nav-links{display:none!important;}
+          .nav-cta-desktop{display:none!important;}
+        }
+        @media(max-width:900px){
+          nav{padding:0 16px;justify-content:center;}
+          .nav-hamburger{position:absolute;right:16px;top:50%;transform:translateY(-50%);}
+        }
+        @media(max-width:768px){
+          .offer-strip{flex-direction:column;align-items:center;text-align:center;padding:18px 20px;gap:12px;}
+          .offer-strip-text{text-align:center;}
+          .signup-form{padding:24px 16px;}
         }
       `}</style>
     </>
