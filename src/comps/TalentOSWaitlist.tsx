@@ -37,16 +37,16 @@ const C = {
   text:    "#EDE5E0",
   sub:     "#7A7070",
   dim:     "#2E2630",
-  gold:    "#D4A853",
-  goldA:   "rgba(212,168,83,0.09)",
-  goldB:   "rgba(212,168,83,0.05)",
+  gold:    "#9F73E6",
+  goldA:   "rgba(159,115,230,0.09)",
+  goldB:   "rgba(159,115,230,0.05)",
   cream:   "#F2EAE0",
-  lime:    "#CCFF47",
-  limeA:   "rgba(204,255,71,0.07)",
-  teal:    "#3ECFB2",
-  violet:  "#A691E8",
-  coral:   "#E87055",
-  mist:    "rgba(212,168,83,0.12)",
+  lime:    "#9F73E6",
+  limeA:   "rgba(159,115,230,0.07)",
+  teal:    "#9F73E6",
+  violet:  "#6342AC",
+  coral:   "#CEB5F8",
+  mist:    "rgba(159,115,230,0.12)",
 };
 
 // ─── Pain archetypes ──────────────────────────────────────────────────────────
@@ -89,7 +89,7 @@ const WORLDS: World[] = [
         pain: "scheduling", w: 2,
       },
       {
-        text:  "The drafts folder. You owe someone a rejection.",
+        text:  "The drafts folder. I owe someone a rejection.",
         world: "Seventeen drafts. The oldest one is from three weeks ago. That candidate has probably moved on.",
         cost:  "You write the email. Then you write seven more. Two hours gone. The inbox hasn't moved.",
         pain: "comms",      w: 2,
@@ -115,13 +115,13 @@ const WORLDS: World[] = [
         pain: "scheduling", w: 3,
       },
       {
-        text:  "Go back to the resume pile while you wait.",
+        text:  "Go back to the resume pile while I wait.",
         world: "You screen eleven more applicants. Two are promising. You add them to a spreadsheet that now has forty-one rows.",
         cost:  "The candidate you needed this week is gone. The spreadsheet will take another week to action.",
         pain: "screening",  w: 2,
       },
       {
-        text:  "Send the candidate a warm holding note. Buy yourself time.",
+        text:  "Send the candidate a warm holding note. Buy myself some time.",
         world: "You write the perfect email. Warm, specific, honest about the timeline.",
         cost:  "It takes forty-five minutes. You have nineteen more candidates who need the same honesty.",
         pain: "comms",      w: 2,
@@ -141,7 +141,7 @@ const WORLDS: World[] = [
     question: "What do you feel in this moment?",
     choices: [
       {
-        text:  "Frustration. You didn't have time to read all the CVs properly.",
+        text:  "Frustration. I didn't have time to read all the CVs properly.",
         world: "If you'd gotten to her profile sooner, you'd have known she was exceptional.",
         cost:  "The next exceptional candidate is in your inbox right now. You haven't gotten to them yet either.",
         pain: "screening",  w: 2,
@@ -286,11 +286,8 @@ function Opening({ onEnter }: { onEnter: () => void }) {
         opacity: v?1:0, transform: v?"none":"translateY(22px)", transition:"all 0.9s ease" }}>
 
         {/* Logo */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, marginBottom:56 }}>
-          <div style={{ width:28, height:28, borderRadius:6, background:C.lime, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <span style={{ fontSize:10, fontWeight:800, fontFamily:MO, color:C.bg }}>TA</span>
-          </div>
-          <span style={{ fontSize:13, fontWeight:500, fontFamily:MO, color:C.sub, letterSpacing:"0.07em" }}>TALENTOS</span>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", marginBottom:56 }}>
+          <img src="/images/logo-beta-v2.png" alt="Driip" style={{ width:80, height:"auto" }} />
         </div>
 
         {/* Ryan: the threshold — invitation to enter the storyworld */}
@@ -319,10 +316,6 @@ function Opening({ onEnter }: { onEnter: () => void }) {
           onMouseLeave={e => { e.currentTarget.style.background="transparent"; e.currentTarget.style.boxShadow="none"; }}>
           LET'S CLOCK IN →
         </button>
-
-        <div style={{ marginTop:14, fontSize:9, color:C.dim, fontFamily:MO, letterSpacing:"0.08em" }}>
-          4 SCENES · ~90 SECONDS · SECOND PERSON
-        </div>
       </div>
     </div>
   );
@@ -365,10 +358,7 @@ function Scene({ world, idx, total, onChoose }: {
         {/* Navigation header */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:44 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <div style={{ width:20, height:20, borderRadius:4, background:C.lime, display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <span style={{ fontSize:7, fontWeight:800, fontFamily:MO, color:C.bg }}>TA</span>
-            </div>
-            <span style={{ fontSize:9, fontFamily:MO, color:C.sub, letterSpacing:"0.08em" }}>TALENTOS</span>
+            <img src="/images/logo-beta-v2.png" alt="Driip" style={{ width:52, height:"auto" }} />
           </div>
           <WorldMap total={total} current={idx}/>
           <button type="button" onClick={skip} style={{ background:"transparent", border:"none", color:C.dim, fontSize:9, fontFamily:MO, cursor:"pointer", letterSpacing:"0.06em", transition:"color 0.15s" }}
@@ -476,8 +466,8 @@ const RESULT_NARRATIVE: Record<PainKey, { reflection: string; future: string; re
   screening: {
     // Ryan: the result re-narrates the storyworld from outside — the reader now sees the pattern
     reflection: "Every morning you entered the same room and faced the same pile. The pile was never the problem. The problem was that the pile required *you* — every hour, every decision, every pair of eyes.",
-    future:     "A world where Agent 01 reads everything before you arrive. Where you walk in to a shortlist, not a stack. Where the pile doesn't exist because it was never yours to carry.",
-    reveal:     "Agent 01 of TalentOS screens every application the moment it arrives. It surfaces your top candidates by the time you finish your coffee.",
+    future:     "A world where Driip reads everything before you arrive. Where you walk in to a shortlist, not a stack. Where the pile doesn't exist because it was never yours to carry.",
+    reveal:     "Agent 01 of Driip screens every application the moment it arrives. It surfaces your top candidates by the time you finish your coffee.",
   },
   scheduling: {
     reflection: "The calendar wasn't a tool. It became a negotiation — slow, fragile, dependent on other people's attention at the right moment. Good candidates don't wait for three people to agree on a Thursday.",
@@ -516,17 +506,9 @@ function Result({ dominant, scores, onReplay }: {
 
         {/* Header */}
         <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:56 }}>
-          <div style={{ width:22, height:22, borderRadius:5, background:C.lime, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <span style={{ fontSize:8, fontWeight:800, fontFamily:MO, color:C.bg }}>TA</span>
-          </div>
-          <span style={{ fontSize:9, fontFamily:MO, color:C.sub, letterSpacing:"0.09em" }}>TALENTOS · YOUR STORYWORLD</span>
+          <img src="/images/logo-beta-v2.png" alt="Driip" style={{ width:52, height:"auto" }} />
         </div>
 
-        {/* Archetype */}
-        <div style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"4px 12px", borderRadius:2, background:`${pain.color}12`, border:`1px solid ${pain.color}28`, marginBottom:20 }}>
-          <div style={{ width:5, height:5, borderRadius:"50%", background:pain.color }}/>
-          <span style={{ fontSize:9, fontFamily:MO, color:pain.color, letterSpacing:"0.11em" }}>{pain.label.toUpperCase()}</span>
-        </div>
 
         {/* Ryan: the re-narration — the reader sees their world clearly for the first time */}
         <h2 style={{ fontSize:36, fontFamily:CG, fontWeight:700, color:C.cream, lineHeight:1.2, marginBottom:24 }}>
@@ -605,7 +587,7 @@ function Result({ dominant, scores, onReplay }: {
               </button>
             </div>
             <div style={{ marginTop:10, fontSize:9, color:C.dim, fontFamily:MO, letterSpacing:"0.06em" }}>
-              LAUNCH UPDATE ONLY. NO SPAM. UNSUBSCRIBE ANYTIME.
+              LAUNCH UPDATE ONLY. NO SPAM.
             </div>
           </div>
         ) : (
