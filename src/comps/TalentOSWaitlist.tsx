@@ -490,16 +490,27 @@ function Result({ dominant, scores, onReplay }: {
 }) {
   const pain    = PAIN[dominant];
   const narr    = RESULT_NARRATIVE[dominant];
-  const [v, setV]     = useState(false);
-  const [email, setE] = useState("");
-  const [sent,  setSent] = useState(false);
+  const [v, setV]           = useState(false);
+  const [email, setE]       = useState("");
+  const [sent,  setSent]    = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => { setTimeout(() => setV(true), 120); }, []);
 
   const sorted = (Object.entries(scores) as [PainKey, number][]).sort((a, b) => b[1] - a[1]);
   const total  = sorted.reduce((s,[,v])=>s+v,0);
 
-  const submit = () => { if (!email.includes("@")) return; setSent(true); };
+  const submit = () => {
+    if (!email.includes("@") || loading) return;
+    setLoading(true);
+    fetch("https://formspree.io/f/xredlbnb", {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ email, pain_profile: pain.label }),
+    })
+      .then(res => { if (res.ok) setSent(true); })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column", justifyContent:"center", padding:"48px 24px 60px", position:"relative", zIndex:1 }}>
@@ -576,16 +587,17 @@ function Result({ dominant, scores, onReplay }: {
                 onFocus={e=>e.target.style.borderColor=`${C.gold}60`}
                 onBlur={e=>e.target.style.borderColor=C.border2}
               />
-              <button type="button" onClick={submit} style={{
-                padding:"12px 20px", borderRadius:2, cursor:"pointer",
+              <button type="button" onClick={submit} disabled={loading} style={{
+                padding:"12px 20px", borderRadius:2, cursor: loading ? "default" : "pointer",
                 background:C.gold, border:"none", color:C.bg,
                 fontSize:10, fontFamily:MO, fontWeight:500, letterSpacing:"0.09em",
                 whiteSpace:"nowrap", transition:"all 0.2s",
+                opacity: loading ? 0.6 : 1,
                 boxShadow:`0 0 0 0 ${C.gold}`,
               }}
-                onMouseEnter={e=>e.currentTarget.style.boxShadow=`0 0 28px ${C.gold}40`}
+                onMouseEnter={e=>{ if(!loading) e.currentTarget.style.boxShadow=`0 0 28px ${C.gold}40`; }}
                 onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
-                NOTIFY ME →
+                {loading ? "SENDING..." : "NOTIFY ME"}
               </button>
             </div>
             <div style={{ marginTop:10, fontSize:9, color:C.dim, fontFamily:MO, letterSpacing:"0.06em" }}>
