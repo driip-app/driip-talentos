@@ -763,7 +763,7 @@ export default function TalentOSPage() {
         .nav-cta{background:var(--lime);color:var(--dark);padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;transition:all .18s;white-space:nowrap;}
         .nav-cta:hover{background:var(--lime-mid);transform:translateY(-1px);}
 
-        .hero{background:var(--dark);padding:96px 48px 88px;position:relative;overflow:hidden;}
+        .hero{background:var(--dark);padding:96px 48px 88px;position:relative;overflow:hidden;min-height:100vh;display:flex;flex-direction:column;justify-content:center;}
         .hero::before{content:'';position:absolute;top:-220px;right:-160px;width:750px;height:750px;border-radius:50%;background:radial-gradient(circle,rgba(159,115,230,0.05) 0%,transparent 65%);pointer-events:none;}
         .hero::after{content:'';position:absolute;bottom:-100px;left:60px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(159,115,230,0.04) 0%,transparent 65%);pointer-events:none;}
         .hero-rings{position:absolute;inset:0;z-index:0;opacity:.85;pointer-events:auto;}
