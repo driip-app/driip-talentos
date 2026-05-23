@@ -40,7 +40,7 @@ const STATIC_HTML = `
         <div class="agent-saving"><span class="saving-icon">⏱</span><span class="saving-text mono">5–10 HRS SAVED / HIRE</span></div>
       </div>
       <div class="agent-card a3">
-        <div class="agent-num mono">AGENT 03 · COMMS BOT</div>
+        <div class="agent-num mono">AGENT 03</div>
         <div class="agent-name syne">Comms Bot</div>
         <div class="agent-before">"Before: Candidates ghost — nobody followed up."</div>
         <div class="agent-after">After: Every applicant gets an automatic status email at every stage before 72 hours is up. Your employer brand stops being written by your silence.</div>

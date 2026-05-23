@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useRef } from "react";
 
 type PainKey = "screening" | "scheduling" | "comms";
