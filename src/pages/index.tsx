@@ -16,7 +16,7 @@ const STATIC_HTML = `
   <div>
     <div class="offer-strip-text syne">Driip can recover up to 51 hours per hire.</div>
   </div>
-  <a href="#demo" class="offer-strip-btn syne">Find Out How</a>
+  <a href="#" class="offer-strip-btn syne">Find Out How</a>
 </div>
 
 <section class="platform" id="platform">
@@ -481,16 +481,10 @@ export default function TalentOSPage() {
         return;
       }
 
-      if (target.closest(".offer-strip-btn")) {
-        e.preventDefault();
-        setShowWaitlist(true);
-        return;
-      }
-
       const anchor = target.closest<HTMLAnchorElement>('a[href^="#"]');
       if (anchor) {
         const href = anchor.getAttribute("href");
-        if (!href) return;
+        if (!href || href === "#") return;
         const el = document.querySelector(href);
         if (el) {
           e.preventDefault();
@@ -530,6 +524,16 @@ export default function TalentOSPage() {
       root.removeEventListener("click", onClick);
       root.removeEventListener("submit", onSubmit as EventListener);
     };
+  }, []);
+
+  useEffect(() => {
+    const root = staticRef.current;
+    if (!root) return;
+    const btn = root.querySelector<HTMLElement>(".offer-strip-btn");
+    if (!btn) return;
+    const handleClick = (e: Event) => { e.preventDefault(); setShowWaitlist(true); };
+    btn.addEventListener("click", handleClick);
+    return () => btn.removeEventListener("click", handleClick);
   }, []);
 
   useEffect(() => {
